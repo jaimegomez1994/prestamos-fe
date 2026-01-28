@@ -1,0 +1,15 @@
+<svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="48" height="48" rx="12" fill="url(#grad)"/>
+  <!-- Hand -->
+  <path d="M14 28C14 28 16 26 20 26C22 26 23 27 24 27C25 27 26 26 28 26C30 26 32 27 32 29C32 31 30 33 26 33H22" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M14 28V34H22" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- Coin -->
+  <circle cx="30" cy="18" r="7" stroke="white" stroke-width="2"/>
+  <text x="30" y="22" text-anchor="middle" fill="white" font-family="DM Sans, sans-serif" font-weight="700" font-size="10">$</text>
+  <defs>
+    <linearGradient id="grad" x1="0" y1="0" x2="48" y2="48" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#059669"/>
+      <stop offset="1" stop-color="#047857"/>
+    </linearGradient>
+  </defs>
+</svg>

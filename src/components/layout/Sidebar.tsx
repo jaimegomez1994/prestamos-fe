@@ -59,7 +59,12 @@ const navItems = [
   },
 ];
 
-function Sidebar() {
+interface SidebarProps {
+  isOpen?: boolean;
+  onClose?: () => void;
+}
+
+function Sidebar({ isOpen = true, onClose }: SidebarProps) {
   const user = useAppSelector(selectUser);
 
   const getInitials = (name: string) => {
@@ -81,71 +86,95 @@ function Sidebar() {
     return labels[role] || role;
   };
 
+  const handleNavClick = () => {
+    // Close sidebar on mobile when clicking a nav item
+    if (onClose && window.innerWidth < 768) {
+      onClose();
+    }
+  };
+
   return (
-    <aside className="w-[260px] bg-white border-r border-[#E7E5E4] fixed h-screen flex flex-col p-6">
-      {/* Logo */}
-      <div className="flex items-center gap-3 pb-6 border-b border-[#E7E5E4] mb-6">
-        <div className="w-10 h-10 bg-gradient-to-br from-[#059669] to-[#047857] rounded-[10px] flex items-center justify-center text-white font-bold text-lg">
-          P
-        </div>
-        <div>
-          <div className="font-semibold text-lg text-[#1C1917]">Prestamos</div>
-          <div className="text-[11px] text-[#A8A29E] uppercase tracking-wide">Sistema de Gestion</div>
-        </div>
-      </div>
+    <>
+      {/* Overlay for mobile */}
+      {isOpen && (
+        <div
+          className="md:hidden fixed inset-0 bg-black/50 z-40 transition-opacity"
+          onClick={onClose}
+        />
+      )}
 
-      {/* Quick Actions */}
-      <div className="flex flex-col gap-2 mb-6">
-        <button className="flex items-center gap-2.5 px-4 py-3 bg-[#059669] text-white rounded-[10px] text-sm font-medium hover:bg-[#047857] transition-all hover:-translate-y-0.5">
-          <svg className="w-[18px] h-[18px]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-          </svg>
-          Nuevo Prestamo
-        </button>
-        <button className="flex items-center gap-2.5 px-4 py-3 bg-[#059669] text-white rounded-[10px] text-sm font-medium hover:bg-[#047857] transition-all hover:-translate-y-0.5">
-          <svg className="w-[18px] h-[18px]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
-          </svg>
-          Registrar Pago
-        </button>
-      </div>
-
-      {/* Navigation */}
-      <nav className="flex-1">
-        <div className="text-[11px] font-semibold uppercase tracking-wide text-[#A8A29E] px-3 mb-2">
-          Menu
-        </div>
-        {navItems.map((item) => (
-          <NavLink
-            key={item.path}
-            to={item.path}
-            className={({ isActive }) =>
-              `flex items-center gap-3 px-3 py-3 rounded-[10px] text-sm font-medium transition-all ${
-                isActive
-                  ? 'bg-[#D1FAE5] text-[#047857]'
-                  : 'text-[#57534E] hover:bg-[#F5F5F4] hover:text-[#1C1917]'
-              }`
-            }
-          >
-            <span className="w-5 h-5">{item.icon}</span>
-            {item.label}
-          </NavLink>
-        ))}
-      </nav>
-
-      {/* User Info */}
-      <div className="pt-6 border-t border-[#E7E5E4]">
-        <div className="flex items-center gap-3 px-3">
-          <div className="w-9 h-9 bg-[#F5F5F4] rounded-full flex items-center justify-center font-semibold text-sm text-[#57534E]">
-            {user ? getInitials(user.name) : '?'}
-          </div>
+      {/* Sidebar */}
+      <aside
+        className={`
+          w-[260px] bg-white border-r border-[#E7E5E4] fixed h-screen flex flex-col p-6 z-50
+          transition-transform duration-300 ease-in-out
+          md:translate-x-0
+          ${isOpen ? 'translate-x-0' : '-translate-x-full'}
+        `}
+      >
+        {/* Logo */}
+        <div className="flex items-center gap-3 pb-6 border-b border-[#E7E5E4] mb-6">
+          <img src="/logo-icon.svg" alt="GD Préstamos" className="w-10 h-10" />
           <div>
-            <div className="font-medium text-sm text-[#1C1917]">{user?.name || 'Usuario'}</div>
-            <div className="text-xs text-[#A8A29E]">{user ? getRoleLabel(user.role) : ''}</div>
+            <div className="font-semibold text-lg text-[#1C1917]">GD Préstamos</div>
+            <div className="text-[11px] text-[#A8A29E] uppercase tracking-wide">Sistema de Gestion</div>
           </div>
         </div>
-      </div>
-    </aside>
+
+        {/* Quick Actions - Hidden on mobile (replaced by FAB) */}
+        <div className="hidden md:flex flex-col gap-2 mb-6">
+          <button className="flex items-center gap-2.5 px-4 py-3 bg-[#059669] text-white rounded-[10px] text-sm font-medium hover:bg-[#047857] transition-all hover:-translate-y-0.5">
+            <svg className="w-[18px] h-[18px]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+            </svg>
+            Nuevo Prestamo
+          </button>
+          <button className="flex items-center gap-2.5 px-4 py-3 bg-[#059669] text-white rounded-[10px] text-sm font-medium hover:bg-[#047857] transition-all hover:-translate-y-0.5">
+            <svg className="w-[18px] h-[18px]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
+            </svg>
+            Registrar Pago
+          </button>
+        </div>
+
+        {/* Navigation */}
+        <nav className="flex-1">
+          <div className="text-[11px] font-semibold uppercase tracking-wide text-[#A8A29E] px-3 mb-2">
+            Menu
+          </div>
+          {navItems.map((item) => (
+            <NavLink
+              key={item.path}
+              to={item.path}
+              onClick={handleNavClick}
+              className={({ isActive }) =>
+                `flex items-center gap-3 px-3 py-3 rounded-[10px] text-sm font-medium transition-all ${
+                  isActive
+                    ? 'bg-[#D1FAE5] text-[#047857]'
+                    : 'text-[#57534E] hover:bg-[#F5F5F4] hover:text-[#1C1917]'
+                }`
+              }
+            >
+              <span className="w-5 h-5">{item.icon}</span>
+              {item.label}
+            </NavLink>
+          ))}
+        </nav>
+
+        {/* User Info */}
+        <div className="pt-6 border-t border-[#E7E5E4]">
+          <div className="flex items-center gap-3 px-3">
+            <div className="w-9 h-9 bg-[#F5F5F4] rounded-full flex items-center justify-center font-semibold text-sm text-[#57534E]">
+              {user ? getInitials(user.name) : '?'}
+            </div>
+            <div>
+              <div className="font-medium text-sm text-[#1C1917]">{user?.name || 'Usuario'}</div>
+              <div className="text-xs text-[#A8A29E]">{user ? getRoleLabel(user.role) : ''}</div>
+            </div>
+          </div>
+        </div>
+      </aside>
+    </>
   );
 }
 

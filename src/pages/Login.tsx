@@ -38,10 +38,8 @@ function Login() {
       {/* Navbar */}
       <nav className="bg-[#1C1917] px-6 py-4 flex items-center justify-between">
         <a href="/" className="flex items-center gap-3 no-underline">
-          <div className="w-9 h-9 bg-gradient-to-br from-[#059669] to-[#047857] rounded-lg flex items-center justify-center text-white font-bold">
-            P
-          </div>
-          <span className="text-white font-semibold text-lg hidden sm:block">GD Prestamos</span>
+          <img src="/logo-icon.svg" alt="GD Préstamos" className="w-9 h-9" />
+          <span className="text-white font-semibold text-lg hidden sm:block">GD Préstamos</span>
         </a>
       </nav>
 
@@ -50,9 +48,7 @@ function Login() {
         <div className="w-full max-w-[440px]">
           {/* Header */}
           <div className="text-center mb-8">
-            <div className="w-14 h-14 bg-gradient-to-br from-[#059669] to-[#047857] rounded-xl flex items-center justify-center text-white font-bold text-2xl mx-auto mb-4">
-              P
-            </div>
+            <img src="/logo-icon.svg" alt="GD Préstamos" className="w-14 h-14 mx-auto mb-4" />
             <h1 className="text-2xl font-bold text-[#1C1917]">Iniciar sesion</h1>
           </div>
 

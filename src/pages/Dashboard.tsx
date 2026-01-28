@@ -15,7 +15,6 @@ function Dashboard() {
     const today = new Date();
     const day = today.getDate();
     const month = today.toLocaleDateString('es-MX', { month: 'long' });
-    const year = today.getFullYear();
 
     if (day <= 15) {
       return `1-15 ${month.charAt(0).toUpperCase() + month.slice(1)}`;
@@ -37,49 +36,49 @@ function Dashboard() {
   return (
     <div>
       {/* Page Header */}
-      <div className="mb-8">
-        <h1 className="text-[28px] font-bold text-[#1C1917]">
+      <div className="mb-6 md:mb-8">
+        <h1 className="text-2xl md:text-[28px] font-bold text-[#1C1917]">
           {getGreeting()}, {user?.name?.split(' ')[0]}
         </h1>
-        <p className="text-[#57534E] text-[15px] mt-1 capitalize">
+        <p className="text-[#57534E] text-sm md:text-[15px] mt-1 capitalize">
           {formatDate()} — Ciclo actual: {getCurrentCycle()}
         </p>
       </div>
 
-      {/* Stats Grid */}
-      <div className="grid grid-cols-4 gap-5 mb-8">
-        <div className="bg-white border border-[#E7E5E4] rounded-2xl p-6 hover:shadow-md hover:border-[#D6D3D1] transition-all">
+      {/* Stats Grid - Responsive: 1 col mobile, 2 cols tablet, 4 cols desktop */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-5 mb-6 md:mb-8">
+        <div className="bg-white border border-[#E7E5E4] rounded-2xl p-5 md:p-6 hover:shadow-md hover:border-[#D6D3D1] transition-all">
           <div className="text-[13px] text-[#A8A29E] mb-2">Capital Activo</div>
-          <div className="text-2xl font-bold font-mono">$0.00</div>
+          <div className="text-xl md:text-2xl font-bold font-mono">$0.00</div>
           <div className="text-xs text-[#A8A29E] mt-2">Total en prestamos</div>
         </div>
-        <div className="bg-white border border-[#E7E5E4] rounded-2xl p-6 hover:shadow-md hover:border-[#D6D3D1] transition-all">
+        <div className="bg-white border border-[#E7E5E4] rounded-2xl p-5 md:p-6 hover:shadow-md hover:border-[#D6D3D1] transition-all">
           <div className="text-[13px] text-[#A8A29E] mb-2">Prestamos Activos</div>
-          <div className="text-[28px] font-bold">0</div>
+          <div className="text-2xl md:text-[28px] font-bold">0</div>
           <div className="text-xs text-[#059669] mt-2">+0 este ciclo</div>
         </div>
-        <div className="bg-white border border-[#E7E5E4] rounded-2xl p-6 hover:shadow-md hover:border-[#D6D3D1] transition-all">
+        <div className="bg-white border border-[#E7E5E4] rounded-2xl p-5 md:p-6 hover:shadow-md hover:border-[#D6D3D1] transition-all">
           <div className="text-[13px] text-[#A8A29E] mb-2">Interes Esperado</div>
-          <div className="text-2xl font-bold font-mono">$0.00</div>
+          <div className="text-xl md:text-2xl font-bold font-mono">$0.00</div>
           <div className="text-xs text-[#A8A29E] mt-2">5% del capital</div>
         </div>
-        <div className="bg-white border border-[#E7E5E4] rounded-2xl p-6 hover:shadow-md hover:border-[#D6D3D1] transition-all">
+        <div className="bg-white border border-[#E7E5E4] rounded-2xl p-5 md:p-6 hover:shadow-md hover:border-[#D6D3D1] transition-all">
           <div className="text-[13px] text-[#A8A29E] mb-2">Clientes Activos</div>
-          <div className="text-[28px] font-bold">0</div>
+          <div className="text-2xl md:text-[28px] font-bold">0</div>
           <div className="text-xs text-[#059669] mt-2">+0 nuevos</div>
         </div>
       </div>
 
       {/* Recent Loans */}
       <div className="bg-white border border-[#E7E5E4] rounded-2xl overflow-hidden">
-        <div className="px-6 py-5 border-b border-[#E7E5E4] flex items-center justify-between">
+        <div className="px-4 md:px-6 py-4 md:py-5 border-b border-[#E7E5E4] flex items-center justify-between">
           <h3 className="font-semibold text-[#1C1917]">Prestamos Recientes</h3>
           <button className="text-sm text-[#57534E] hover:text-[#1C1917] font-medium px-3 py-2 rounded-md hover:bg-[#F5F5F4] transition-all">
             Ver todos →
           </button>
         </div>
-        <div className="p-6">
-          <p className="text-[#A8A29E] text-sm text-center py-8">
+        <div className="p-4 md:p-6">
+          <p className="text-[#A8A29E] text-sm text-center py-6 md:py-8">
             No hay prestamos registrados aun
           </p>
         </div>
