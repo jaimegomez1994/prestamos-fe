@@ -4,6 +4,7 @@ import Dashboard from './pages/Dashboard';
 import Clients from './pages/Clients';
 import Loans from './pages/Loans';
 import Payments from './pages/Payments';
+import Investors from './pages/Investors';
 import Layout from './components/layout/Layout';
 import ProtectedRoute from './components/ProtectedRoute';
 
@@ -26,7 +27,7 @@ function App() {
           <Route path="/clientes" element={<Clients />} />
           <Route path="/prestamos" element={<Loans />} />
           <Route path="/pagos" element={<Payments />} />
-          <Route path="/inversores" element={<div>Inversores - Coming soon</div>} />
+          <Route path="/inversores" element={<Investors />} />
           <Route path="/reportes" element={<div>Reportes - Coming soon</div>} />
         </Route>
 
