@@ -10,7 +10,7 @@ import { CustomerTable } from '../components/customers/CustomerTable';
 import { CustomerForm } from '../components/customers/CustomerForm';
 import type { Customer, CreateCustomerRequest } from '../types/customer';
 
-function Clientes() {
+function Clients() {
   const [search, setSearch] = useState('');
   const [showInactive, setShowInactive] = useState(false);
   const [isFormOpen, setIsFormOpen] = useState(false);
@@ -134,4 +134,4 @@ function Clientes() {
   );
 }
 
-export default Clientes;
+export default Clients;
