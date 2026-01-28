@@ -57,10 +57,7 @@ export function LoanTable({
                 Inversor
               </th>
               <th className="text-right px-6 py-4 text-[11px] font-semibold uppercase tracking-wide text-[#A8A29E]">
-                Monto Original
-              </th>
-              <th className="text-right px-6 py-4 text-[11px] font-semibold uppercase tracking-wide text-[#A8A29E]">
-                Saldo Actual
+                Monto
               </th>
               <th className="text-center px-6 py-4 text-[11px] font-semibold uppercase tracking-wide text-[#A8A29E]">
                 Fecha
@@ -90,11 +87,6 @@ export function LoanTable({
                 </td>
                 <td className="px-6 py-4 text-right font-mono font-medium">
                   {formatCurrency(loan.originalAmount)}
-                </td>
-                <td className="px-6 py-4 text-right font-mono font-medium">
-                  <span className={loan.currentBalance > 0 ? 'text-[#DC2626]' : 'text-[#059669]'}>
-                    {formatCurrency(loan.currentBalance)}
-                  </span>
                 </td>
                 <td className="px-6 py-4 text-center text-[#57534E] text-sm">
                   {formatDate(loan.loanDate)}
@@ -173,17 +165,9 @@ export function LoanTable({
               </span>
             </div>
 
-            <div className="grid grid-cols-2 gap-3 text-sm mb-3">
-              <div>
-                <div className="text-[#A8A29E] text-xs">Monto Original</div>
-                <div className="font-mono font-medium">{formatCurrency(loan.originalAmount)}</div>
-              </div>
-              <div>
-                <div className="text-[#A8A29E] text-xs">Saldo Actual</div>
-                <div className={`font-mono font-medium ${loan.currentBalance > 0 ? 'text-[#DC2626]' : 'text-[#059669]'}`}>
-                  {formatCurrency(loan.currentBalance)}
-                </div>
-              </div>
+            <div className="text-sm mb-3">
+              <div className="text-[#A8A29E] text-xs">Monto</div>
+              <div className="font-mono font-medium">{formatCurrency(loan.originalAmount)}</div>
             </div>
 
             <div className="flex items-center gap-4 text-sm text-[#57534E] mb-3">
