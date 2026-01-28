@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
+import Clientes from './pages/Clientes';
 import Layout from './components/layout/Layout';
 import ProtectedRoute from './components/ProtectedRoute';
 
@@ -20,7 +21,7 @@ function App() {
           }
         >
           <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/clientes" element={<div>Clientes - Coming soon</div>} />
+          <Route path="/clientes" element={<Clientes />} />
           <Route path="/prestamos" element={<div>Prestamos - Coming soon</div>} />
           <Route path="/pagos" element={<div>Pagos - Coming soon</div>} />
           <Route path="/inversores" element={<div>Inversores - Coming soon</div>} />
