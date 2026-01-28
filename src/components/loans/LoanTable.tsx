@@ -1,0 +1,147 @@
+import type { Loan } from '../../types/loan';
+import { PAYMENT_METHOD_LABELS } from '../../types/loan';
+import { formatCurrency } from '../../lib/format';
+
+interface LoanTableProps {
+  loans: Loan[];
+  isLoading: boolean;
+  emptyMessage: string;
+  onEdit: (loan: Loan) => void;
+  onSettle: (loan: Loan) => void;
+  onReopen: (loan: Loan) => void;
+}
+
+export function LoanTable({
+  loans,
+  isLoading,
+  emptyMessage,
+  onEdit,
+  onSettle,
+  onReopen,
+}: LoanTableProps) {
+  if (isLoading) {
+    return (
+      <div className="bg-white border border-[#E7E5E4] rounded-2xl p-12 text-center text-[#A8A29E]">
+        Cargando...
+      </div>
+    );
+  }
+
+  if (!loans.length) {
+    return (
+      <div className="bg-white border border-[#E7E5E4] rounded-2xl p-12 text-center text-[#A8A29E]">
+        {emptyMessage}
+      </div>
+    );
+  }
+
+  return (
+    <div className="bg-white border border-[#E7E5E4] rounded-2xl overflow-hidden">
+      <table className="w-full">
+        <thead>
+          <tr className="border-b border-[#E7E5E4] bg-[#FAFAF9]">
+            <th className="text-left px-6 py-4 text-[11px] font-semibold uppercase tracking-wide text-[#A8A29E]">
+              Cliente
+            </th>
+            <th className="text-left px-6 py-4 text-[11px] font-semibold uppercase tracking-wide text-[#A8A29E]">
+              Inversor
+            </th>
+            <th className="text-right px-6 py-4 text-[11px] font-semibold uppercase tracking-wide text-[#A8A29E]">
+              Monto Original
+            </th>
+            <th className="text-right px-6 py-4 text-[11px] font-semibold uppercase tracking-wide text-[#A8A29E]">
+              Saldo Actual
+            </th>
+            <th className="text-center px-6 py-4 text-[11px] font-semibold uppercase tracking-wide text-[#A8A29E]">
+              Fecha
+            </th>
+            <th className="text-center px-6 py-4 text-[11px] font-semibold uppercase tracking-wide text-[#A8A29E]">
+              Estado
+            </th>
+            <th className="px-6 py-4"></th>
+          </tr>
+        </thead>
+        <tbody>
+          {loans.map((loan) => (
+            <tr
+              key={loan.id}
+              className="border-b border-[#E7E5E4] last:border-0 hover:bg-[#FAFAF9] transition-colors"
+            >
+              <td className="px-6 py-4">
+                <div className="font-medium text-[#1C1917]">{loan.customerName}</div>
+                {loan.paymentMethod && (
+                  <div className="text-xs text-[#A8A29E] mt-0.5">
+                    {PAYMENT_METHOD_LABELS[loan.paymentMethod as keyof typeof PAYMENT_METHOD_LABELS] || loan.paymentMethod}
+                  </div>
+                )}
+              </td>
+              <td className="px-6 py-4 text-[#57534E]">
+                {loan.investorName}
+              </td>
+              <td className="px-6 py-4 text-right font-mono font-medium">
+                {formatCurrency(loan.originalAmount)}
+              </td>
+              <td className="px-6 py-4 text-right font-mono font-medium">
+                <span className={loan.currentBalance > 0 ? 'text-[#DC2626]' : 'text-[#059669]'}>
+                  {formatCurrency(loan.currentBalance)}
+                </span>
+              </td>
+              <td className="px-6 py-4 text-center text-[#57534E] text-sm">
+                {new Date(loan.loanDate).toLocaleDateString('es-MX', {
+                  day: 'numeric',
+                  month: 'short',
+                  year: 'numeric',
+                })}
+              </td>
+              <td className="px-6 py-4 text-center">
+                <span
+                  className={`inline-flex px-2.5 py-1 rounded-full text-xs font-medium ${
+                    loan.isSettled
+                      ? 'bg-[#D1FAE5] text-[#047857]'
+                      : 'bg-[#FEF3C7] text-[#D97706]'
+                  }`}
+                >
+                  {loan.isSettled ? 'Liquidado' : 'Activo'}
+                </span>
+              </td>
+              <td className="px-6 py-4">
+                <div className="flex items-center justify-end gap-1">
+                  <button
+                    onClick={() => onEdit(loan)}
+                    className="p-2 text-[#57534E] hover:text-[#1C1917] hover:bg-[#F5F5F4] rounded-lg transition-colors"
+                    title="Editar"
+                  >
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                    </svg>
+                  </button>
+                  {loan.isSettled ? (
+                    <button
+                      onClick={() => onReopen(loan)}
+                      className="p-2 text-[#D97706] hover:bg-[#FEF3C7] rounded-lg transition-colors"
+                      title="Reabrir"
+                    >
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                      </svg>
+                    </button>
+                  ) : (
+                    <button
+                      onClick={() => onSettle(loan)}
+                      className="p-2 text-[#059669] hover:bg-[#D1FAE5] rounded-lg transition-colors"
+                      title="Liquidar"
+                    >
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                    </button>
+                  )}
+                </div>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+}
