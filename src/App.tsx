@@ -5,6 +5,7 @@ import Clients from './pages/Clients';
 import Loans from './pages/Loans';
 import Payments from './pages/Payments';
 import Investors from './pages/Investors';
+import Reports from './pages/Reports';
 import Layout from './components/layout/Layout';
 import ProtectedRoute from './components/ProtectedRoute';
 
@@ -28,7 +29,7 @@ function App() {
           <Route path="/prestamos" element={<Loans />} />
           <Route path="/pagos" element={<Payments />} />
           <Route path="/inversores" element={<Investors />} />
-          <Route path="/reportes" element={<div>Reportes - Coming soon</div>} />
+          <Route path="/reportes" element={<Reports />} />
         </Route>
 
         {/* Default redirect */}
