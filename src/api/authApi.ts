@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { apiClient } from '../lib/api';
 import { useAppDispatch } from '../store/hooks';
-import { loginSuccess, setUserProfile, setError, logout } from '../store/slices/authSlice';
+import { loginSuccess, setError, logout } from '../store/slices/authSlice';
 import type { LoginRequest, AuthResponse, User } from '../types/auth';
 
 const authApi = {
@@ -29,8 +29,6 @@ export const useLogin = () => {
 };
 
 export const useProfile = () => {
-  const dispatch = useAppDispatch();
-
   return useQuery({
     queryKey: ['profile'],
     queryFn: authApi.getProfile,
