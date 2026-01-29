@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import { SlideIn } from '../ui/SlideIn';
 import { useLoans } from '../../api/loanApi';
+import { FileUploadZone } from '../ui/FileUploadZone';
+import { AttachmentList } from '../ui/AttachmentList';
 import type { Payment, CreatePaymentRequest } from '../../types/payment';
 import type { PaymentMethod } from '../../types/loan';
 import { PAYMENT_METHOD_LABELS } from '../../types/loan';
@@ -10,7 +12,7 @@ interface PaymentFormProps {
   payment: Payment | null;
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (data: CreatePaymentRequest) => Promise<void>;
+  onSubmit: (data: CreatePaymentRequest, files: File[]) => Promise<void>;
   isLoading: boolean;
   preselectedLoanId?: string;
 }
@@ -33,6 +35,7 @@ export function PaymentForm({
     (payment?.paymentMethod as PaymentMethod) ?? 'EFECTIVO'
   );
   const [notes, setNotes] = useState(payment?.notes ?? '');
+  const [pendingFiles, setPendingFiles] = useState<File[]>([]);
   const [error, setError] = useState('');
 
   const { data: loansData } = useLoans({ isSettled: false, pageSize: 100 });
@@ -48,6 +51,7 @@ export function PaymentForm({
       setCapitalPaid(payment?.capitalPaid?.toString() ?? '');
       setPaymentMethod((payment?.paymentMethod as PaymentMethod) ?? 'EFECTIVO');
       setNotes(payment?.notes ?? '');
+      setPendingFiles([]);
       setError('');
     }
   }, [isOpen, payment, preselectedLoanId]);
@@ -89,7 +93,7 @@ export function PaymentForm({
         capitalPaid: capital,
         paymentMethod,
         notes: notes.trim() || undefined,
-      });
+      }, pendingFiles);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Error al guardar');
     }
@@ -243,6 +247,12 @@ export function PaymentForm({
               placeholder="Notas adicionales..."
             />
           </div>
+
+          {isEditing && payment && (
+            <AttachmentList entityType="payments" entityId={payment.id} />
+          )}
+
+          <FileUploadZone files={pendingFiles} onChange={setPendingFiles} />
         </div>
       </form>
     </SlideIn>

@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { SlideIn } from '../ui/SlideIn';
 import { useCustomers } from '../../api/customerApi';
 import { useInvestors } from '../../api/investorApi';
+import { FileUploadZone } from '../ui/FileUploadZone';
+import { AttachmentList } from '../ui/AttachmentList';
 import type { Loan, CreateLoanRequest, PaymentMethod } from '../../types/loan';
 import { PAYMENT_METHOD_LABELS } from '../../types/loan';
 
@@ -9,7 +11,7 @@ interface LoanFormProps {
   loan: Loan | null;
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (data: CreateLoanRequest) => Promise<void>;
+  onSubmit: (data: CreateLoanRequest, files: File[]) => Promise<void>;
   isLoading: boolean;
 }
 
@@ -22,6 +24,7 @@ export function LoanForm({ loan, isOpen, onClose, onSubmit, isLoading }: LoanFor
     (loan?.paymentMethod as PaymentMethod) ?? ''
   );
   const [notes, setNotes] = useState(loan?.notes ?? '');
+  const [pendingFiles, setPendingFiles] = useState<File[]>([]);
   const [error, setError] = useState('');
 
   const { data: customersData } = useCustomers({ isActive: true, pageSize: 100 });
@@ -62,7 +65,7 @@ export function LoanForm({ loan, isOpen, onClose, onSubmit, isLoading }: LoanFor
         loanDate,
         paymentMethod: paymentMethod || undefined,
         notes: notes.trim() || undefined,
-      });
+      }, pendingFiles);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Error al guardar');
     }
@@ -201,6 +204,12 @@ export function LoanForm({ loan, isOpen, onClose, onSubmit, isLoading }: LoanFor
               placeholder="Notas adicionales..."
             />
           </div>
+
+          {isEditing && loan && (
+            <AttachmentList entityType="loans" entityId={loan.id} />
+          )}
+
+          <FileUploadZone files={pendingFiles} onChange={setPendingFiles} />
         </div>
       </form>
     </SlideIn>

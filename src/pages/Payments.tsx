@@ -5,6 +5,7 @@ import {
   useUpdatePayment,
   useDeletePayment,
 } from '../api/paymentApi';
+import { useUploadAttachments } from '../api/attachmentApi';
 import { PaymentTable } from '../components/payments/PaymentTable';
 import { PaymentForm } from '../components/payments/PaymentForm';
 import { FAB } from '../components/ui/FAB';
@@ -23,6 +24,7 @@ function Payments() {
   const createMutation = useCreatePayment();
   const updateMutation = useUpdatePayment();
   const deleteMutation = useDeletePayment();
+  const uploadMutation = useUploadAttachments();
 
   const handleOpenCreate = () => {
     setEditingPayment(null);
@@ -39,9 +41,11 @@ function Payments() {
     setEditingPayment(null);
   };
 
-  const handleSubmit = async (formData: CreatePaymentRequest) => {
+  const handleSubmit = async (formData: CreatePaymentRequest, files: File[]) => {
+    let paymentId: string;
+
     if (editingPayment) {
-      await updateMutation.mutateAsync({
+      const updated = await updateMutation.mutateAsync({
         id: editingPayment.id,
         data: {
           paymentDate: formData.paymentDate,
@@ -51,9 +55,20 @@ function Payments() {
           notes: formData.notes,
         },
       });
+      paymentId = updated.id;
     } else {
-      await createMutation.mutateAsync(formData);
+      const created = await createMutation.mutateAsync(formData);
+      paymentId = created.id;
     }
+
+    if (files.length > 0) {
+      await uploadMutation.mutateAsync({
+        entityType: 'payments',
+        entityId: paymentId,
+        files,
+      });
+    }
+
     handleCloseForm();
   };
 

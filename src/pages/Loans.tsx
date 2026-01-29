@@ -6,6 +6,7 @@ import {
   useSettleLoan,
   useReopenLoan,
 } from '../api/loanApi';
+import { useUploadAttachments } from '../api/attachmentApi';
 import { LoanTable } from '../components/loans/LoanTable';
 import { LoanForm } from '../components/loans/LoanForm';
 import { FAB } from '../components/ui/FAB';
@@ -26,6 +27,7 @@ function Loans() {
   const updateMutation = useUpdateLoan();
   const settleMutation = useSettleLoan();
   const reopenMutation = useReopenLoan();
+  const uploadMutation = useUploadAttachments();
 
   const handleOpenCreate = () => {
     setEditingLoan(null);
@@ -42,18 +44,31 @@ function Loans() {
     setEditingLoan(null);
   };
 
-  const handleSubmit = async (formData: CreateLoanRequest) => {
+  const handleSubmit = async (formData: CreateLoanRequest, files: File[]) => {
+    let loanId: string;
+
     if (editingLoan) {
-      await updateMutation.mutateAsync({
+      const updated = await updateMutation.mutateAsync({
         id: editingLoan.id,
         data: {
           paymentMethod: formData.paymentMethod,
           notes: formData.notes,
         },
       });
+      loanId = updated.id;
     } else {
-      await createMutation.mutateAsync(formData);
+      const created = await createMutation.mutateAsync(formData);
+      loanId = created.id;
     }
+
+    if (files.length > 0) {
+      await uploadMutation.mutateAsync({
+        entityType: 'loans',
+        entityId: loanId,
+        files,
+      });
+    }
+
     handleCloseForm();
   };
 
