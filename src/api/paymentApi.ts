@@ -30,7 +30,7 @@ const paymentApi = {
   getByLoanId: (loanId: string): Promise<{ payments: Payment[] }> =>
     apiClient.get(`/payments/loan/${loanId}`),
 
-  create: (data: CreatePaymentRequest): Promise<Payment> =>
+  create: (data: CreatePaymentRequest): Promise<Payment[]> =>
     apiClient.post('/payments', data),
 
   update: (id: string, data: UpdatePaymentRequest): Promise<Payment> =>

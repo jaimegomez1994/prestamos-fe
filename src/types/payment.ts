@@ -33,7 +33,7 @@ export interface PaymentFilters {
 }
 
 export interface CreatePaymentRequest {
-  loanId: string;
+  customerId: string;
   paymentDate: string;
   interestPaid: number;
   capitalPaid: number;

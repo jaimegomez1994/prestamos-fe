@@ -58,7 +58,7 @@ function Payments() {
       paymentId = updated.id;
     } else {
       const created = await createMutation.mutateAsync(formData);
-      paymentId = created.id;
+      paymentId = created[0]?.id;
     }
 
     if (files.length > 0) {
