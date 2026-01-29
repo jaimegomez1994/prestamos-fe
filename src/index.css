@@ -71,3 +71,22 @@ body {
 .animate-slide-in {
   animation: slide-in-right 0.3s ease-out;
 }
+
+/* Print styles for cobranza report */
+@media print {
+  body {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  /* Hide sidebar, mobile header, and nav */
+  aside, header, nav {
+    display: none !important;
+  }
+
+  /* Remove sidebar margin */
+  main, [class*="md:ml-"] {
+    margin-left: 0 !important;
+    padding: 16px !important;
+  }
+}
