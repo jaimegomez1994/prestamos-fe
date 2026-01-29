@@ -50,10 +50,7 @@ function Loans() {
     if (editingLoan) {
       const updated = await updateMutation.mutateAsync({
         id: editingLoan.id,
-        data: {
-          paymentMethod: formData.paymentMethod,
-          notes: formData.notes,
-        },
+        data: formData,
       });
       loanId = updated.id;
     } else {

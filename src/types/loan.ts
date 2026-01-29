@@ -42,6 +42,10 @@ export interface CreateLoanRequest {
 }
 
 export interface UpdateLoanRequest {
+  customerId?: string;
+  investorId?: string;
+  originalAmount?: number;
+  loanDate?: string;
   paymentMethod?: PaymentMethod;
   notes?: string;
 }

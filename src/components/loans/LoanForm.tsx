@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { SlideIn } from '../ui/SlideIn';
 import { useCustomers } from '../../api/customerApi';
 import { useInvestors } from '../../api/investorApi';
@@ -29,6 +29,19 @@ export function LoanForm({ loan, isOpen, onClose, onSubmit, isLoading }: LoanFor
 
   const { data: customersData } = useCustomers({ isActive: true, pageSize: 100 });
   const { data: investorsData } = useInvestors();
+
+  useEffect(() => {
+    if (isOpen) {
+      setCustomerId(loan?.customerId ?? '');
+      setInvestorId(loan?.investorId ?? '');
+      setOriginalAmount(loan?.originalAmount?.toString() ?? '');
+      setLoanDate(loan?.loanDate ?? new Date().toISOString().split('T')[0]);
+      setPaymentMethod((loan?.paymentMethod as PaymentMethod) ?? '');
+      setNotes(loan?.notes ?? '');
+      setPendingFiles([]);
+      setError('');
+    }
+  }, [isOpen, loan]);
 
   const isEditing = !!loan;
 
@@ -111,7 +124,6 @@ export function LoanForm({ loan, isOpen, onClose, onSubmit, isLoading }: LoanFor
             <select
               value={customerId}
               onChange={(e) => setCustomerId(e.target.value)}
-              disabled={isEditing}
               className="w-full px-4 py-3 border border-[#E7E5E4] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#059669] focus:border-transparent disabled:bg-[#F5F5F4] disabled:cursor-not-allowed"
             >
               <option value="">Seleccionar cliente...</option>
@@ -130,7 +142,6 @@ export function LoanForm({ loan, isOpen, onClose, onSubmit, isLoading }: LoanFor
             <select
               value={investorId}
               onChange={(e) => setInvestorId(e.target.value)}
-              disabled={isEditing}
               className="w-full px-4 py-3 border border-[#E7E5E4] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#059669] focus:border-transparent disabled:bg-[#F5F5F4] disabled:cursor-not-allowed"
             >
               <option value="">Seleccionar inversor...</option>
@@ -152,8 +163,7 @@ export function LoanForm({ loan, isOpen, onClose, onSubmit, isLoading }: LoanFor
                 type="number"
                 value={originalAmount}
                 onChange={(e) => setOriginalAmount(e.target.value)}
-                disabled={isEditing}
-                min="1"
+                  min="1"
                 step="0.01"
                 className="w-full pl-8 pr-4 py-3 border border-[#E7E5E4] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#059669] focus:border-transparent disabled:bg-[#F5F5F4] disabled:cursor-not-allowed font-mono"
                 placeholder="0.00"
@@ -169,7 +179,6 @@ export function LoanForm({ loan, isOpen, onClose, onSubmit, isLoading }: LoanFor
               type="date"
               value={loanDate}
               onChange={(e) => setLoanDate(e.target.value)}
-              disabled={isEditing}
               className="w-full px-4 py-3 border border-[#E7E5E4] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#059669] focus:border-transparent disabled:bg-[#F5F5F4] disabled:cursor-not-allowed"
             />
           </div>
