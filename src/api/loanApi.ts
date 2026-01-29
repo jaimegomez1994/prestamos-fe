@@ -31,9 +31,6 @@ const loanApi = {
   update: (id: string, data: UpdateLoanRequest): Promise<Loan> =>
     apiClient.put(`/loans/${id}`, data),
 
-  settle: (id: string): Promise<Loan> =>
-    apiClient.post(`/loans/${id}/settle`),
-
   reopen: (id: string): Promise<Loan> =>
     apiClient.post(`/loans/${id}/reopen`),
 };
@@ -74,18 +71,6 @@ export const useUpdateLoan = () => {
     onSuccess: (_, { id }) => {
       queryClient.invalidateQueries({ queryKey: ['loans'] });
       queryClient.invalidateQueries({ queryKey: ['loan', id] });
-    },
-  });
-};
-
-export const useSettleLoan = () => {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: loanApi.settle,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['loans'] });
-      queryClient.invalidateQueries({ queryKey: ['customers'] });
     },
   });
 };

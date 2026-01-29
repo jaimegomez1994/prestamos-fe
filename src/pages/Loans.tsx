@@ -3,7 +3,6 @@ import {
   useLoans,
   useCreateLoan,
   useUpdateLoan,
-  useSettleLoan,
   useReopenLoan,
 } from '../api/loanApi';
 import { useUploadAttachments } from '../api/attachmentApi';
@@ -25,7 +24,6 @@ function Loans() {
 
   const createMutation = useCreateLoan();
   const updateMutation = useUpdateLoan();
-  const settleMutation = useSettleLoan();
   const reopenMutation = useReopenLoan();
   const uploadMutation = useUploadAttachments();
 
@@ -67,12 +65,6 @@ function Loans() {
     }
 
     handleCloseForm();
-  };
-
-  const handleSettle = async (loan: Loan) => {
-    if (confirm(`¿Liquidar el prestamo de ${loan.customerName}?`)) {
-      await settleMutation.mutateAsync(loan.id);
-    }
   };
 
   const handleReopen = async (loan: Loan) => {
@@ -160,7 +152,6 @@ function Loans() {
         isLoading={isLoading}
         emptyMessage={emptyMessage}
         onEdit={handleOpenEdit}
-        onSettle={handleSettle}
         onReopen={handleReopen}
       />
 

@@ -7,7 +7,6 @@ interface LoanTableProps {
   isLoading: boolean;
   emptyMessage: string;
   onEdit: (loan: Loan) => void;
-  onSettle: (loan: Loan) => void;
   onReopen: (loan: Loan) => void;
 }
 
@@ -16,7 +15,6 @@ export function LoanTable({
   isLoading,
   emptyMessage,
   onEdit,
-  onSettle,
   onReopen,
 }: LoanTableProps) {
   if (isLoading) {
@@ -113,7 +111,7 @@ export function LoanTable({
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
                       </svg>
                     </button>
-                    {loan.isSettled ? (
+                    {loan.isSettled && (
                       <button
                         onClick={() => onReopen(loan)}
                         className="p-2 text-[#D97706] hover:bg-[#FEF3C7] rounded-lg transition-colors"
@@ -121,16 +119,6 @@ export function LoanTable({
                       >
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                        </svg>
-                      </button>
-                    ) : (
-                      <button
-                        onClick={() => onSettle(loan)}
-                        className="p-2 text-[#059669] hover:bg-[#D1FAE5] rounded-lg transition-colors"
-                        title="Liquidar"
-                      >
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                         </svg>
                       </button>
                     )}
@@ -194,7 +182,7 @@ export function LoanTable({
                 </svg>
                 Editar
               </button>
-              {loan.isSettled ? (
+              {loan.isSettled && (
                 <button
                   onClick={() => onReopen(loan)}
                   className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-[#D97706] hover:bg-[#FEF3C7] rounded-lg transition-colors"
@@ -203,16 +191,6 @@ export function LoanTable({
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
                   </svg>
                   Reabrir
-                </button>
-              ) : (
-                <button
-                  onClick={() => onSettle(loan)}
-                  className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-[#059669] hover:bg-[#D1FAE5] rounded-lg transition-colors"
-                >
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                  Liquidar
                 </button>
               )}
             </div>
