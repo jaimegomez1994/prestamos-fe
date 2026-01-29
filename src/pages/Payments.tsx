@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import {
   usePayments,
   useCreatePayment,
@@ -13,9 +14,18 @@ import type { Payment, CreatePaymentRequest } from '../types/payment';
 import { formatCurrency } from '../lib/format';
 
 function Payments() {
+  const location = useLocation();
   const [search, setSearch] = useState('');
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingPayment, setEditingPayment] = useState<Payment | null>(null);
+
+  useEffect(() => {
+    if ((location.state as { openCreate?: boolean })?.openCreate) {
+      setEditingPayment(null);
+      setIsFormOpen(true);
+      window.history.replaceState({}, '');
+    }
+  }, [location.state]);
 
   const { data, isLoading } = usePayments({
     search: search || undefined,

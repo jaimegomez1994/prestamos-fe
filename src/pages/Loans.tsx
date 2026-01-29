@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import {
   useLoans,
   useCreateLoan,
@@ -12,10 +13,20 @@ import { FAB } from '../components/ui/FAB';
 import type { Loan, CreateLoanRequest } from '../types/loan';
 
 function Loans() {
+  const location = useLocation();
   const [search, setSearch] = useState('');
   const [showSettled, setShowSettled] = useState(false);
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingLoan, setEditingLoan] = useState<Loan | null>(null);
+
+  useEffect(() => {
+    if ((location.state as { openCreate?: boolean })?.openCreate) {
+      setEditingLoan(null);
+      setIsFormOpen(true);
+      // Clear the state so it doesn't reopen on re-renders
+      window.history.replaceState({}, '');
+    }
+  }, [location.state]);
 
   const { data, isLoading } = useLoans({
     search: search || undefined,

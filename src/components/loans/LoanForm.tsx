@@ -1,11 +1,13 @@
 import { useState, useEffect } from 'react';
 import { SlideIn } from '../ui/SlideIn';
-import { useCustomers } from '../../api/customerApi';
+import { useCustomers, useCreateCustomer } from '../../api/customerApi';
 import { useInvestors } from '../../api/investorApi';
 import { FileUploadZone } from '../ui/FileUploadZone';
 import { AttachmentList } from '../ui/AttachmentList';
+import { CustomerForm } from '../customers/CustomerForm';
 import type { Loan, CreateLoanRequest, PaymentMethod } from '../../types/loan';
 import { PAYMENT_METHOD_LABELS } from '../../types/loan';
+import type { CreateCustomerRequest } from '../../types/customer';
 
 interface LoanFormProps {
   loan: Loan | null;
@@ -26,9 +28,17 @@ export function LoanForm({ loan, isOpen, onClose, onSubmit, isLoading }: LoanFor
   const [notes, setNotes] = useState(loan?.notes ?? '');
   const [pendingFiles, setPendingFiles] = useState<File[]>([]);
   const [error, setError] = useState('');
+  const [isCustomerFormOpen, setIsCustomerFormOpen] = useState(false);
 
   const { data: customersData } = useCustomers({ isActive: true, pageSize: 100 });
   const { data: investorsData } = useInvestors();
+  const createCustomerMutation = useCreateCustomer();
+
+  const handleCreateCustomer = async (data: CreateCustomerRequest) => {
+    const created = await createCustomerMutation.mutateAsync(data);
+    setCustomerId(created.id);
+    setIsCustomerFormOpen(false);
+  };
 
   useEffect(() => {
     if (isOpen) {
@@ -90,6 +100,7 @@ export function LoanForm({ loan, isOpen, onClose, onSubmit, isLoading }: LoanFor
     : 'Registra un nuevo prestamo';
 
   return (
+    <>
     <SlideIn
       isOpen={isOpen}
       onClose={onClose}
@@ -121,18 +132,30 @@ export function LoanForm({ loan, isOpen, onClose, onSubmit, isLoading }: LoanFor
             <label className="block text-sm font-medium text-[#1C1917] mb-2">
               Cliente <span className="text-[#DC2626]">*</span>
             </label>
-            <select
-              value={customerId}
-              onChange={(e) => setCustomerId(e.target.value)}
-              className="w-full px-4 py-3 border border-[#E7E5E4] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#059669] focus:border-transparent disabled:bg-[#F5F5F4] disabled:cursor-not-allowed"
-            >
-              <option value="">Seleccionar cliente...</option>
-              {customersData?.customers.map((customer) => (
-                <option key={customer.id} value={customer.id}>
-                  {customer.name}
-                </option>
-              ))}
-            </select>
+            <div className="flex gap-2">
+              <select
+                value={customerId}
+                onChange={(e) => setCustomerId(e.target.value)}
+                className="flex-1 px-4 py-3 border border-[#E7E5E4] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#059669] focus:border-transparent disabled:bg-[#F5F5F4] disabled:cursor-not-allowed"
+              >
+                <option value="">Seleccionar cliente...</option>
+                {customersData?.customers.map((customer) => (
+                  <option key={customer.id} value={customer.id}>
+                    {customer.name}
+                  </option>
+                ))}
+              </select>
+              <button
+                type="button"
+                onClick={() => setIsCustomerFormOpen(true)}
+                className="px-3 py-3 border border-[#E7E5E4] rounded-lg text-[#059669] hover:bg-[#D1FAE5] transition-colors"
+                title="Nuevo cliente"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                </svg>
+              </button>
+            </div>
           </div>
 
           <div>
@@ -222,5 +245,14 @@ export function LoanForm({ loan, isOpen, onClose, onSubmit, isLoading }: LoanFor
         </div>
       </form>
     </SlideIn>
+
+    <CustomerForm
+      customer={null}
+      isOpen={isCustomerFormOpen}
+      onClose={() => setIsCustomerFormOpen(false)}
+      onSubmit={handleCreateCustomer}
+      isLoading={createCustomerMutation.isPending}
+    />
+    </>
   );
 }

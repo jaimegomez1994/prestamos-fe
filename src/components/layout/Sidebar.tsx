@@ -1,4 +1,4 @@
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 import { useAppSelector } from '../../store/hooks';
 import { selectUser } from '../../store/slices/authSlice';
 
@@ -66,6 +66,7 @@ interface SidebarProps {
 
 function Sidebar({ isOpen = true, onClose }: SidebarProps) {
   const user = useAppSelector(selectUser);
+  const navigate = useNavigate();
 
   const getInitials = (name: string) => {
     return name
@@ -123,13 +124,19 @@ function Sidebar({ isOpen = true, onClose }: SidebarProps) {
 
         {/* Quick Actions - Hidden on mobile (replaced by FAB) */}
         <div className="hidden md:flex flex-col gap-2 mb-6">
-          <button className="flex items-center gap-2.5 px-4 py-3 bg-[#059669] text-white rounded-[10px] text-sm font-medium hover:bg-[#047857] transition-all hover:-translate-y-0.5">
+          <button
+            onClick={() => navigate('/prestamos', { state: { openCreate: true } })}
+            className="flex items-center gap-2.5 px-4 py-3 bg-[#059669] text-white rounded-[10px] text-sm font-medium hover:bg-[#047857] transition-all hover:-translate-y-0.5"
+          >
             <svg className="w-[18px] h-[18px]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
             </svg>
             Nuevo Prestamo
           </button>
-          <button className="flex items-center gap-2.5 px-4 py-3 bg-[#059669] text-white rounded-[10px] text-sm font-medium hover:bg-[#047857] transition-all hover:-translate-y-0.5">
+          <button
+            onClick={() => navigate('/pagos', { state: { openCreate: true } })}
+            className="flex items-center gap-2.5 px-4 py-3 bg-[#059669] text-white rounded-[10px] text-sm font-medium hover:bg-[#047857] transition-all hover:-translate-y-0.5"
+          >
             <svg className="w-[18px] h-[18px]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
             </svg>
