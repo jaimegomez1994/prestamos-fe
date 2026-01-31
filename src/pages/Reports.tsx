@@ -36,11 +36,25 @@ function Reports() {
 
   const cobranzaData = useMemo(() => {
     const loans = loansData?.loans ?? [];
-    const sorted = [...loans].sort((a, b) => a.customerName.localeCompare(b.customerName));
-    const totalBalance = sorted.reduce((s, l) => s + l.currentBalance, 0);
+    const grouped = new Map<string, { customerId: string; customerName: string; totalBalance: number; loanCount: number }>();
+    for (const loan of loans) {
+      const existing = grouped.get(loan.customerId);
+      if (existing) {
+        existing.totalBalance += loan.currentBalance;
+        existing.loanCount += 1;
+      } else {
+        grouped.set(loan.customerId, {
+          customerId: loan.customerId,
+          customerName: loan.customerName,
+          totalBalance: loan.currentBalance,
+          loanCount: 1,
+        });
+      }
+    }
+    const customers = Array.from(grouped.values()).sort((a, b) => a.customerName.localeCompare(b.customerName));
+    const totalBalance = customers.reduce((s, c) => s + c.totalBalance, 0);
     const totalInterest = totalBalance * 0.05;
-    const uniqueCustomers = new Set(sorted.map((l) => l.customerId)).size;
-    return { loans: sorted, totalBalance, totalInterest, uniqueCustomers };
+    return { customers, totalBalance, totalInterest, totalLoans: loans.length };
   }, [loansData]);
 
   const cycleLabel = getCycleLabel();
@@ -129,11 +143,11 @@ function Reports() {
               <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 print:grid-cols-4 print:gap-2">
                 <div className="bg-white border border-[#E7E5E4] rounded-2xl p-5">
                   <div className="text-[12px] uppercase tracking-wide text-[#A8A29E] mb-2">Clientes</div>
-                  <div className="text-2xl font-bold">{cobranzaData.uniqueCustomers}</div>
+                  <div className="text-2xl font-bold">{cobranzaData.customers.length}</div>
                 </div>
                 <div className="bg-white border border-[#E7E5E4] rounded-2xl p-5">
                   <div className="text-[12px] uppercase tracking-wide text-[#A8A29E] mb-2">Prestamos</div>
-                  <div className="text-2xl font-bold">{cobranzaData.loans.length}</div>
+                  <div className="text-2xl font-bold">{cobranzaData.totalLoans}</div>
                 </div>
                 <div className="bg-[#059669] text-white rounded-2xl p-5 print:bg-[#059669]">
                   <div className="text-[12px] uppercase tracking-wide text-white/80 mb-2">Interes a Cobrar</div>
@@ -146,14 +160,14 @@ function Reports() {
               </div>
 
               {/* Desktop Table */}
-              {cobranzaData.loans.length > 0 ? (
+              {cobranzaData.customers.length > 0 ? (
                 <div className="bg-white border border-[#E7E5E4] rounded-2xl overflow-hidden hidden md:block print:block">
                   <div className="px-5 py-4 border-b border-[#E7E5E4] bg-[#F5F5F4] print:bg-[#F5F5F4]">
                     <span className="font-semibold text-[15px] flex items-center gap-2">
                       <svg className="w-5 h-5 text-[#A8A29E]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
                       </svg>
-                      Prestamos — {cycleLabel}
+                      Cobranza — {cycleLabel}
                     </span>
                   </div>
                   <table className="w-full">
@@ -169,30 +183,25 @@ function Reports() {
                           Interes (5%)
                         </th>
                         <th className="text-right px-5 py-3 text-[11px] font-semibold uppercase tracking-wide text-[#A8A29E] bg-[#F5F5F4] border-b border-[#E7E5E4]">
-                          Saldo (PTMO)
-                        </th>
-                        <th className="text-left px-5 py-3 text-[11px] font-semibold uppercase tracking-wide text-[#A8A29E] bg-[#F5F5F4] border-b border-[#E7E5E4]">
-                          Inversor
+                          Saldo
                         </th>
                       </tr>
                     </thead>
                     <tbody>
-                      {cobranzaData.loans.map((loan, idx) => (
-                        <tr key={loan.id} className="border-b border-[#E7E5E4] last:border-0 hover:bg-[#FAFAF9]">
+                      {cobranzaData.customers.map((cust, idx) => (
+                        <tr key={cust.customerId} className="border-b border-[#E7E5E4] last:border-0 hover:bg-[#FAFAF9]">
                           <td className="px-5 py-4 text-sm text-[#A8A29E]">{idx + 1}</td>
                           <td className="px-5 py-4 text-sm font-medium text-[#1C1917]">
-                            {loan.customerName}
+                            {cust.customerName}
+                            {cust.loanCount > 1 && (
+                              <span className="ml-2 text-xs text-[#A8A29E]">({cust.loanCount} ptmos)</span>
+                            )}
                           </td>
                           <td className="px-5 py-4 text-sm text-right font-mono font-semibold text-[#059669]">
-                            {formatCurrency(loan.currentBalance * 0.05)}
+                            {formatCurrency(cust.totalBalance * 0.05)}
                           </td>
                           <td className="px-5 py-4 text-sm text-right font-mono font-medium">
-                            {formatCurrency(loan.currentBalance)}
-                          </td>
-                          <td className="px-5 py-4 text-sm">
-                            <span className="inline-flex px-2.5 py-1 rounded-full text-xs font-medium bg-[#D1FAE5] text-[#047857]">
-                              {loan.investorName}
-                            </span>
+                            {formatCurrency(cust.totalBalance)}
                           </td>
                         </tr>
                       ))}
@@ -206,7 +215,6 @@ function Reports() {
                         <td className="px-5 py-4 text-sm text-right font-mono font-bold text-[#047857]">
                           {formatCurrency(cobranzaData.totalBalance)}
                         </td>
-                        <td></td>
                       </tr>
                     </tfoot>
                   </table>
@@ -218,27 +226,29 @@ function Reports() {
               )}
 
               {/* Mobile Cards */}
-              {cobranzaData.loans.length > 0 && (
+              {cobranzaData.customers.length > 0 && (
                 <div className="md:hidden space-y-3 print:hidden">
-                  {cobranzaData.loans.map((loan) => (
-                    <div key={loan.id} className="bg-white border border-[#E7E5E4] rounded-2xl p-4">
+                  {cobranzaData.customers.map((cust) => (
+                    <div key={cust.customerId} className="bg-white border border-[#E7E5E4] rounded-2xl p-4">
                       <div className="flex items-center justify-between mb-3">
-                        <div className="font-semibold text-[15px] text-[#1C1917]">{loan.customerName}</div>
-                        <span className="inline-flex px-2.5 py-1 rounded-full text-xs font-medium bg-[#D1FAE5] text-[#047857]">
-                          {loan.investorName}
-                        </span>
+                        <div className="font-semibold text-[15px] text-[#1C1917]">
+                          {cust.customerName}
+                          {cust.loanCount > 1 && (
+                            <span className="ml-1.5 text-xs font-normal text-[#A8A29E]">({cust.loanCount} ptmos)</span>
+                          )}
+                        </div>
                       </div>
                       <div className="grid grid-cols-2 gap-3">
                         <div>
                           <div className="text-[11px] uppercase tracking-wide text-[#A8A29E] mb-1">Interes</div>
                           <div className="font-mono font-semibold text-[15px] text-[#059669]">
-                            {formatCurrency(loan.currentBalance * 0.05)}
+                            {formatCurrency(cust.totalBalance * 0.05)}
                           </div>
                         </div>
                         <div>
                           <div className="text-[11px] uppercase tracking-wide text-[#A8A29E] mb-1">Saldo</div>
                           <div className="font-mono font-semibold text-[15px]">
-                            {formatCurrency(loan.currentBalance)}
+                            {formatCurrency(cust.totalBalance)}
                           </div>
                         </div>
                       </div>
